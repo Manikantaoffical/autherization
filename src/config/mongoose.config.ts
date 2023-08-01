@@ -12,20 +12,13 @@ export class MongooseConfigService implements MongooseOptionsFactory {
 
     return {
       // uri:"",
-      // uri: 'mongodb+srv://macsof:macsof@nextlevelcarwash.yjs3i.mongodb.net/multivendorecommerce?retryWrites=true&w=majority',
+      uri: 'mongodb+srv://manidb:manikanta@cluster0.laz6d.mongodb.net/auth6?retryWrites=true&w=majority',
       
-      //useCreateIndex: true
-      keepAlive: true,
-      // useNewUrlParser: true,
-      autoIndex: true,
-      //poolSize: 10,
-      //bufferMaxEntries: 0,
-      connectTimeoutMS: 10000,
-      socketTimeoutMS: 45000,
-      //useFindAndModify: false,
-      // useUnifiedTopology: true,
-      // maxPoolSize: 50,
-      wtimeoutMS: 2500,
+       //useCreateIndex: true
+      //  useNewUrlParser: true,
+      //  useCreateIndex: true,
+       autoIndex: true,
+      //  useUnifiedTopology: true,
     };
   }
 }
