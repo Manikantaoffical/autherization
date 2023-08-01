@@ -54,8 +54,6 @@ export class UserController {
   }
 
   @Get('/getprodlist')
-  // @UseGuards(JwtGuard, RolesGuard)
-  // @Roles(Role.User)
   async getList() {
     try{
       const list = await this.userService.getProducts();
