@@ -53,6 +53,8 @@ export class UserController {
     }
   }
 
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.User)
   @Get('/getprodlist')
   async getList() {
     try{
