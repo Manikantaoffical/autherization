@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { SignInDto } from './dto/signIn.dto';
 import { SignUpDto } from './dto/signUp.dto';
@@ -7,6 +7,9 @@ import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { Role } from 'src/roles/roles.enum';
 import { Roles } from 'src/roles/roles.decorator';
 import { RolesGuard } from 'src/roles/roles.guard';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { extname } from 'path';
+import { diskStorage } from 'multer';
 
 @Controller('user')
 export class UserController {
@@ -41,9 +44,23 @@ export class UserController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.Admin)
   @Post('/addProduct')
-  async addProduct(@Body() req: ProductDto) {
+  @UseInterceptors(
+    AnyFilesInterceptor({
+      storage: diskStorage({
+        destination: './files',
+        filename: (req, file, cb) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          cb(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async addProduct(@Body() req: ProductDto, @UploadedFiles() image) {
     try{
-      const addproduct = await this.userService.createProduct(req);
+      const addproduct = await this.userService.createProduct(req, image);
       return addproduct
     } catch(error) {
       return {
@@ -67,3 +84,4 @@ export class UserController {
     }
   }
 }
+

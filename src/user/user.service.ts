@@ -82,8 +82,21 @@ export class UserService {
     }
   }
 
-  async createProduct(req: ProductDto) {
+  async createProduct(req: ProductDto, image) {
     try{
+      if (image) {
+        const reqDoc = image.map((doc, index) => {
+            let IsPrimary = false
+            if (index == 0) {
+                IsPrimary = true
+            }
+            const randomNumber = Math.floor((Math.random() * 1000000) + 1);
+            return doc.filename
+            
+        })
+
+        req.productImage = reqDoc.toString()
+    }
         const addprod = await this.productModel.create(req);
         if(addprod) {
             // console.log(process.env.JWT_SECRET);
