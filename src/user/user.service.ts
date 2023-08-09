@@ -82,7 +82,7 @@ export class UserService {
     }
   }
 
-  async createProduct(req: ProductDto, image) {
+  async createProduct(req: ProductDto, image: Express.Multer.File[]) {
     try{
       if (image) {
         const reqDoc = image.map((doc, index) => {
