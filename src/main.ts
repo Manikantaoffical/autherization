@@ -9,7 +9,7 @@ async function bootstrap() {
   dotenv.config();
   app.enableCors();
   const staticPath = path.join(__dirname, '..', 'files');
-  app.use('/uploads', express.static(staticPath));
+  app.use('/files', express.static(staticPath));
   await app.listen(200);
 }
 bootstrap();
