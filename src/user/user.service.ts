@@ -14,7 +14,7 @@ export class UserService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectModel(Product.name) private readonly productModel: Model<Product>,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
   ) {}
 
   async register(req: SignInDto) {
@@ -28,7 +28,7 @@ export class UserService {
           username: req.username,
           email: req.email,
           password: bcryptPassword,
-          role: req.role
+          role: req.role,
         });
         return addUser;
       } else {
@@ -45,10 +45,10 @@ export class UserService {
     }
   }
 
-  async loginUser(req: SignUpDto):Promise<{token: string} | any> {
+  async loginUser(req: SignUpDto): Promise<{ token: string } | any> {
     try {
       const findUser = await this.userModel.findOne({ email: req.email });
-    //   console.log(findUser);
+      //   console.log(findUser);
       if (!findUser) {
         return {
           statusCode: HttpStatus.BAD_REQUEST,
@@ -61,17 +61,17 @@ export class UserService {
         );
         // console.log(matchPassword);
         if (matchPassword) {
-        const jwtToken = await this.authService.createToken({findUser});
-        //   console.log(jwtToken);
+          const jwtToken = await this.authService.createToken({ findUser });
+          //   console.log(jwtToken);
           return {
             token: jwtToken,
             userData: findUser,
           };
         } else {
-            return {
-                statusCode: HttpStatus.BAD_REQUEST,
-                message: "Password incorrect",
-            }
+          return {
+            statusCode: HttpStatus.BAD_REQUEST,
+            message: 'Password incorrect',
+          };
         }
       }
     } catch (error) {
@@ -83,62 +83,91 @@ export class UserService {
   }
 
   async createProduct(req: ProductDto, image: Express.Multer.File[]) {
-    try{
+    try {
       if (image) {
         const reqDoc = image.map((doc, index) => {
-            let IsPrimary = false
-            if (index == 0) {
-                IsPrimary = true
-            }
-            const randomNumber = Math.floor((Math.random() * 1000000) + 1);
-            return doc.filename
-            
-        })
+          let IsPrimary = false;
+          if (index == 0) {
+            IsPrimary = true;
+          }
+          const randomNumber = Math.floor(Math.random() * 1000000 + 1);
+          return doc.filename;
+        });
 
-        req.productImage = reqDoc.toString()
-    }
-        const addprod = await this.productModel.create(req);
-        if(addprod) {
-            // console.log(process.env.JWT_SECRET);
-            return {
-                statusCode: HttpStatus.OK,
-                message: "Product Added Successfully",
-                data: addprod,
-            }
-        } else {
-            return {
-                statusCode: HttpStatus.BAD_REQUEST,
-                message: "Invalid Request",
-            }
-        }
-    } catch(error) {
+        req.productImage = reqDoc.toString();
+      }
+      const addprod = await this.productModel.create(req);
+      if (addprod) {
+        // console.log(process.env.JWT_SECRET);
         return {
-            statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-            message: error,
-        }
+          statusCode: HttpStatus.OK,
+          message: 'Product Added Successfully',
+          data: addprod,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: 'Invalid Request',
+        };
+      }
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: error,
+      };
     }
   }
 
   async getProducts() {
-    try{
+    try {
       const findProducts = await this.productModel.find();
-      if(findProducts) {
+      if (findProducts) {
         return {
           statusCode: HttpStatus.OK,
-          message: "List of products",
+          message: 'List of products',
           data: findProducts,
-        } 
+        };
       } else {
         return {
           statusCode: HttpStatus.BAD_REQUEST,
-          message: "Invalid Request",
-        }
+          message: 'Invalid Request',
+        };
       }
-    } catch(error) {
-      return{
+    } catch (error) {
+      return {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         message: error,
+      };
+    }
+  }
+
+  async getProductById(req: ProductDto) {
+    try {
+      const findProduct = await this.productModel.findOne({ _id: req._id });
+      return findProduct;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: error,
+      };
+    }
+  }
+
+  async deleteProd(req: ProductDto) {
+    try {
+      const removeProduct = await this.productModel.deleteOne({ _id: req._id });
+      if (removeProduct) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Product Deleted',
+          data: removeProduct,
+        };
       }
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: error,
+      };
     }
   }
 }

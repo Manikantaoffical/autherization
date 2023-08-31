@@ -3,4 +3,5 @@ export class ProductDto{
     productSize: string
     productImage: string
     price: number
+    _id: string
 }

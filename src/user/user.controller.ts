@@ -83,5 +83,35 @@ export class UserController {
       }
     }
   }
+
+  @UseGuards(JwtGuard)
+  @Roles(Role.Admin)
+  @Post('/getproductbyid')
+  async getProductById(@Body() req: ProductDto) {
+    try{
+      const findProduct = await this.userService.getProductById(req);
+      return findProduct
+    } catch(error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: error,
+      }
+    }
+  }
+
+  @UseGuards(JwtGuard)
+  @Roles(Role.Admin)
+  @Post('/deleteproduct')
+  async deleteProduct(@Body() req: ProductDto) {
+    try{
+      const removeProduct = await this.userService.deleteProd(req);
+      return removeProduct
+    } catch(error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: error,
+      }
+    }
+  }
 }
 
